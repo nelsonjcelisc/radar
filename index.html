@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<title>Smoothed D3.js Radar Chart http://bl.ocks.org/nbremer/21746a9668ffdf6d8242</title>
+
+	<!-- Google fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300" rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+
+	<!-- D3.js -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+	<style>
+		body {
+			font-family: 'Open Sans', sans-serif;
+			font-size: 11px;
+			font-weight: 300;
+			fill: #242424;
+			text-align: center;
+			text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
+			cursor: default;
+		}
+
+		.legend {
+			font-family: 'Raleway', sans-serif;
+			fill: #333333;
+		}
+
+		.tooltip {
+			fill: #333333;
+		}
+	</style>
+
+</head>
+
+<body>
+	<input type="date" placeholder="dd-mm-yyyy" value="" min="2015-01-01" max="2018-12-01"></input>
+	<a href="http://bl.ocks.org/nbremer/21746a9668ffdf6d8242">http://bl.ocks.org/nbremer/21746a9668ffdf6d8242</a>
+	<div class="radarChart"></div>
+
+	<script src="radarChart.js"></script>
+	<script>
+
+		/* Radar chart design created by Nadieh Bremer - VisualCinnamon.com */
+
+		////////////////////////////////////////////////////////////// 
+		//////////////////////// Set-Up ////////////////////////////// 
+		////////////////////////////////////////////////////////////// 
+
+		var margin = { top: 100, right: 100, bottom: 100, left: 100 },
+			width = Math.min(700, window.innerWidth - 10) - margin.left - margin.right,
+			height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
+
+
+
+		d3.csv('data/HORAS_X_TIPO_EQUIPO_TIPO_ORDEN.csv', function (data) {
+			////////////////////////////////////////////////////////////// 
+			////////////////////////// Data ////////////////////////////// 
+			////////////////////////////////////////////////////////////// 
+			var misdatos = [];
+			var propiedadMes = d3.nest();
+			propiedadMes.key(function (d) { return d.mes });
+			var listaMes = propiedadMes.entries(data);
+			var listaMes_X_equipo = listaMes.filter(fecha => fecha.key == '2016-11')[0].values.filter(equipo => equipo.tipo_equipo == 'TEQ-77');
+			var arreglo = [];
+			listaMes_X_equipo.forEach(function (d) {
+				row = {};
+				row.axis = d.tipo_orden;
+				row.value = +d.trabajo_real || 0;
+				arreglo.push(row);
+			});
+			misdatos.push(arreglo);
+			console.log(arreglo);
+			////////////////////////////////////////////////////////////// 
+			//////////////////// Draw the Chart ////////////////////////// 
+			////////////////////////////////////////////////////////////// 
+			var color = d3.scale.ordinal()
+				.range(["#EDC951", "#CC333F", "#00A0B0"]);
+
+			var radarChartOptions = {
+				w: width,
+				h: height,
+				margin: margin,
+				maxValue: 100,
+				levels: 5,
+				roundStrokes: true,
+				color: color
+			};
+			//Call function to draw the Radar chart
+			RadarChart(".radarChart", misdatos, radarChartOptions);
+		});
+
+
+	</script>
+</body>
+
+</html>
