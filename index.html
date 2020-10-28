@@ -37,7 +37,7 @@
 </head>
 
 <body>
-	<input type="date" placeholder="dd-mm-yyyy" value="" min="2015-01-01" max="2018-12-01"></input>
+	<input type="date" onchange="dibujarRadar()" id="fecha" name="fecha" placeholder="dd-mm-yyyy" value="" min="2015-01-01" max="2018-12-01"></input>
 	<a href="http://bl.ocks.org/nbremer/21746a9668ffdf6d8242">http://bl.ocks.org/nbremer/21746a9668ffdf6d8242</a>
 	<div class="radarChart"></div>
 
@@ -49,8 +49,10 @@
 		////////////////////////////////////////////////////////////// 
 		//////////////////////// Set-Up ////////////////////////////// 
 		////////////////////////////////////////////////////////////// 
+function dibujarRadar(fecha) {
+	var anno_mes = fecha != undefined ? fecha : document.getElementById('fecha').value.substring(0,7);
 
-		var margin = { top: 100, right: 100, bottom: 100, left: 100 },
+	var margin = { top: 100, right: 100, bottom: 100, left: 100 },
 			width = Math.min(700, window.innerWidth - 10) - margin.left - margin.right,
 			height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
 
@@ -64,7 +66,7 @@
 			var propiedadMes = d3.nest();
 			propiedadMes.key(function (d) { return d.mes });
 			var listaMes = propiedadMes.entries(data);
-			var listaMes_X_equipo = listaMes.filter(fecha => fecha.key == '2016-11')[0].values.filter(equipo => equipo.tipo_equipo == 'TEQ-77');
+			var listaMes_X_equipo = listaMes.filter(fecha => fecha.key == anno_mes)[0].values.filter(equipo => equipo.tipo_equipo == 'TEQ-77');
 			var arreglo = [];
 			listaMes_X_equipo.forEach(function (d) {
 				row = {};
@@ -92,7 +94,9 @@
 			//Call function to draw the Radar chart
 			RadarChart(".radarChart", misdatos, radarChartOptions);
 		});
-
+}
+		
+dibujarRadar('2016-11');
 
 	</script>
 </body>
